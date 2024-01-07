@@ -14,10 +14,16 @@ public class Stop extends Command {
   @Override
   public void initialize() {
     driveSubsystem.drive(0,0,0,true);
+    System.out.println("Stop init");
   }
 
   @Override
   public boolean isFinished() {
     return true;
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    System.out.println("Stop finished");
   }
 }

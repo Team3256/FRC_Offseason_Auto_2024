@@ -9,8 +9,12 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.OIConstants;
 import frc.robot.swerve.DriveSubsystem;
+import frc.robot.swerve.commands.Backward;
+import frc.robot.swerve.commands.Forward;
+import frc.robot.swerve.commands.Stop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /*
@@ -22,25 +26,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   private final DriveSubsystem swerve= new DriveSubsystem();
 
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  CommandXboxController driver = new CommandXboxController(0);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the button bindings
     configureButtonBindings();
-
-    // Configure default commands
-    swerve.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () ->
-                swerve.drive(
-                    m_driverController.getLeftY(),
-                    m_driverController.getLeftX(),
-                    m_driverController.getRightX(),
-                    false),
-                swerve));
   }
 
   /**
@@ -49,12 +38,16 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling passing it to a
    * {@link JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+    driver.povUp().onTrue(new Forward(swerve));
+    driver.povDown().onTrue(new Backward(swerve));
+    driver.a().onTrue(new Stop(swerve));
+  }
 
   public Command getAutonomousCommand(){
     // Load the path you want to follow using its name in the GUI
     PathPlannerPath path = PathPlannerPath.fromPathFile("CircularReasoning");
-
+    
     // Create a path following command using AutoBuilder. This will also trigger event markers.
     return AutoBuilder.followPathWithEvents(path);
   }

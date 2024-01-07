@@ -14,10 +14,16 @@ public class Forward extends Command {
   @Override
   public void initialize() {
     driveSubsystem.drive(1,0,0,true);
+    System.out.println("Forward init");
   }
 
   @Override
   public boolean isFinished() {
     return true;
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    System.out.println("Forward finished");
   }
 }
